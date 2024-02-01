@@ -46,7 +46,7 @@ const monsterStats      = document.querySelector("#monsterStats");
 const monsterName       = document.querySelector("#monsterName");
 const monsterHealthText = document.querySelector("#monsterHealth");
 
-const weapons           = [
+const weapons           = [ 
     {
       name: "stick",
       power: 5
@@ -149,7 +149,7 @@ function sellWeapon () {
         let currentWeapon = inventory.shift();
         text.innerText = "Você vendeu um(a) " + currentWeapon + ".";
 
-        text.innerText += "Agora seu inventário tem: " + inventory;
+        text.innerText += " Agora seu inventário tem: " + inventory;
     } else {
         text.innerText = "Não venda sua única arma!";
     }
@@ -178,12 +178,18 @@ function fightDragon() {
 }
 
 function goFight () {
-    
+    update(locations[3]);
+    monsterHealth = monsters[fighting].health;
+    monsterName.innerText = monsters[fighting].name;
+    monsterHealthText.innerHTML = monsters[fighting].health;
+
+    monsterStats.style.display = "block";
 }
 
 function attack () {
-
-}
+    text.innerText = "O " + monsters[fighting].name + " ataca.";
+    text.innerText += " Você ataca com sua " + weapons[currentWeapon].name + ".";
+}   
 
 function dodge () {
 
