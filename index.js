@@ -11,11 +11,11 @@ const locations    = [
     {
         name: "Praça da cidade",
         "button text":      ["Ir para a loja", "Ir para a caverna", "Lutar com o dragão"],
-        "burron functions": [goStore(), goCave(), fightDragon()],
+        "button functions": [goStore(), goCave(), fightDragon()],
         text: "Você está na praça da cidade, você vê uma placa que diz \"loja\""
     },
     {
-      name: "Store",
+      name: "Loja",
       "button text":      ["Buy 10 health (10 gold)", "Buy weapon (30 gold)", "Ir para a cidade"],
       "button functions": [buyHealth(), buyWeapon(), goTown()],
       text: "You enter the store."
@@ -189,8 +189,30 @@ function goFight () {
 function attack () {
     text.innerText = "O " + monsters[fighting].name + " ataca.";
     text.innerText += " Você ataca com sua " + weapons[currentWeapon].name + ".";
+
+    health -= monsters[fighting].level;
+    monsterHealth -= weapons[currentWeapon].power + Math.floor(Math.random() * xp) + 1;
+
+    healthText.innerText        = health;
+    monsterHealthText.innerText = monsterHealth;
+
+    if (health <= 0) {
+        lose();
+    } else if (monsterHealth <= 0) {
+        defeatMonster();
+    }
+
 }   
 
 function dodge () {
+    text.innerText = "Você evita o ataque do " + monsters[fighting].name;
+}
 
+function lose () {
+
+}
+
+function defeatMonster() {
+    gold += Math.floor(monsters[fighting].level * 6.7);
+    xp += monsters[fighting].level;
 }
