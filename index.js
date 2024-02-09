@@ -31,6 +31,18 @@ const locations    = [
         "button text": ["Atacar", "Desviar", "Ir para a cidade"],
         "button functions": [attack, dodge, goTown],
         text: "Você está lutando contra um monstro"
+    },
+    {
+        name: "Matar monstro",
+        "button text": ["Ir para a cidade", "Ir para a cidade", "Ir para a cidade"],
+        "button functions": [goTown, goTown, goTown],
+        text: 'O monstro grita "Arg!" à medida que morre. Você ganha pontos de experiência e encontra ouro.'
+    },
+    {
+        name: "Perdeu",
+        "button text": ["Reiniciar?", "Reiniciar?", "Reiniciar?"],
+        "button functions": [restart, restart, restart],
+        text: "Você morreu. &#x2620;"
     }
 ];
 
@@ -80,6 +92,8 @@ button2.onclick = goCave;
 button3.onclick = fightDragon;
 
 function update(location) {
+
+    monsterStats.style.display = "none";
   
     button1.innerText = location["button text"][0];
     button2.innerText = location["button text"][1];
@@ -211,10 +225,10 @@ function dodge () {
 }
 
 function lose () {
-
+    update(locations[5]);
 }
 
-function defeatMonster() {
+function defeatMonster () {
     gold += Math.floor(monsters[fighting].level * 6.7);
     xp   += monsters[fighting].level;
 
@@ -222,4 +236,17 @@ function defeatMonster() {
     xpText.innerText   = xp;
 
     update(locations[4]);
+}
+
+function restart () {
+    xp = 0;
+    health = 100;
+    gold = 50;
+    currentWeapon = 0;
+    inventory = ["Bastão"];
+
+    xpText.innerText = xp;
+    healthText.innerText = health;
+    goldText.innerText = gold;
+
 }
