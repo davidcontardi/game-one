@@ -1,10 +1,10 @@
-let xp            = 0;
-let health        = 100;
-let gold          = 50;
-let currentWeapon = 0;
-
 let fighting;
 let monsterHealth;
+
+let xp             = 0;
+let health         = 100;
+let gold           = 50;
+let currentWeapon  = 0;
 let inventory      = ["bastão"];
 
 const locations    = [
@@ -43,13 +43,18 @@ const locations    = [
         "button text": ["Reiniciar?", "Reiniciar?", "Reiniciar?"],
         "button functions": [restart, restart, restart],
         text: "Você morreu. &#x2620;"
+    },
+    {
+        name: "win",
+        "button text": ["Reiniciar?", "Reiniciar?", "Reiniciar?"],
+        "button functions": [restart, restart, restart],
+        text: "Você derrotou o dragon e ganhou o jogo! &#x1F389;"
     }
 ];
 
 const button1           = document.querySelector("#button1");
 const button2           = document.querySelector("#button2");
 const button3           = document.querySelector("#button3");
-
 const text              = document.querySelector("#text");
 const xpText            = document.querySelector("#xpText");
 const healthText        = document.querySelector("#healthText");
@@ -103,7 +108,7 @@ function update(location) {
     button2.onclick = location["button functions"][1];
     button3.onclick = location["button functions"][2];
 
-    text.innerText = location.text;
+    text.innerHTML = location.text;
 }
 
 function goTown() {
@@ -206,8 +211,13 @@ function attack () {
     text.innerText = "O " + monsters[fighting].name + " ataca.";
 
     text.innerText += " Você ataca com sua " + weapons[currentWeapon].name + ".";
-    health         -= monsters[fighting].level;
-    monsterHealth  -= weapons[currentWeapon].power + Math.floor(Math.random() * xp) + 1;
+    health         -= getMonsterAttackValue(monsters[fighting].level);
+
+    if (isMonterHit()) {
+        monsterHealth  -= weapons[currentWeapon].power + Math.floor(Math.random() * xp) + 1;
+    } else {
+        text.innerText += " Você errou."
+    }
 
     healthText.innerText        = health;
     monsterHealthText.innerText = monsterHealth;
@@ -218,7 +228,28 @@ function attack () {
         defeatMonster();
     }
 
+    if (fighting === 2) {
+        winGame()
+    } else {
+        defeatMonster();
+    }
+
+    if (Math.random() <= .1) {
+        text.innerText += " Sua " + inventory.pop() + " quebrou.";
+        currentWeapon--;
+    }
+
 }   
+
+function getMonsterAttackValue (level) {
+    const hit = (level * 5) - (Math.floor(Math.random() * xp));
+
+    return hit > 0 ? hit : 0;
+}
+
+function isMonterHit () {
+    return Math.random() > .2 || health < 20;
+}
 
 function dodge () {
     text.innerText = "Você evita o ataque do " + monsters[fighting].name;
@@ -226,6 +257,10 @@ function dodge () {
 
 function lose () {
     update(locations[5]);
+}
+
+function winGame () {
+    update(locations[6]);
 }
 
 function defeatMonster () {
