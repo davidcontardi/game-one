@@ -35,7 +35,7 @@ const locations    = [
     {
         name: "Matar monstro",
         "button text": ["Ir para a cidade", "Ir para a cidade", "Ir para a cidade"],
-        "button functions": [goTown, goTown, goTown],
+        "button functions": [goTown, goTown, easterEgg],
         text: 'O monstro grita "Arg!" à medida que morre. Você ganha pontos de experiência e encontra ouro.'
     },
     {
@@ -49,7 +49,14 @@ const locations    = [
         "button text": ["Reiniciar?", "Reiniciar?", "Reiniciar?"],
         "button functions": [restart, restart, restart],
         text: "Você derrotou o dragon e ganhou o jogo! &#x1F389;"
+    },
+    {
+        name: "easter egg",
+        "button text": ["2", "8", "Go to town square?"],
+        "button functions": [pickTwo, pickEight, goTown],
+        text: "Você encontrou um jogo secreto, escolha um número acima, dez números serão escolhidos aleatóriamente entre 0 e 10. Se o número escolhido corresponder a um dos números aleatório, você ganha!"
     }
+    
 ];
 
 const button1           = document.querySelector("#button1");
@@ -225,16 +232,15 @@ function attack () {
     if (health <= 0) {
         lose();
     } else if (monsterHealth <= 0) {
-        defeatMonster();
+        if (fighting === 2) {
+            winGame()
+        } else {
+            defeatMonster();
+        }
     }
 
-    if (fighting === 2) {
-        winGame()
-    } else {
-        defeatMonster();
-    }
 
-    if (Math.random() <= .1) {
+    if (Math.random() <= .1 && inventory.length !== 1) {
         text.innerText += " Sua " + inventory.pop() + " quebrou.";
         currentWeapon--;
     }
@@ -243,6 +249,7 @@ function attack () {
 
 function getMonsterAttackValue (level) {
     const hit = (level * 5) - (Math.floor(Math.random() * xp));
+    console.log("hit", hit);
 
     return hit > 0 ? hit : 0;
 }
@@ -283,5 +290,44 @@ function restart () {
     xpText.innerText = xp;
     healthText.innerText = health;
     goldText.innerText = gold;
+    goTown();
+}
 
+function easterEgg () {
+    update(locations[7]);
+}
+
+function pick (palpite) {
+    const numbers = [];
+
+    while (numbers.length < 10) {
+        numbers.push(Math.floor(Math.random() * 11));
+    }
+
+    text.innerText = "Você escolheu " + palpite + ". Aqui estão os números aleatórios:\n";
+
+    for (var i = 0; i < 10; i++) {
+        text.innerText += numbers[i] + "\n";
+        if (numbers.includes(palpite)) {
+            text.innerText     += "Certo! Você ganhou 20 de ouros ";
+            gold               += 20;
+            goldText.innerText = gold;
+        } else {
+            text.innerText       += "Errado! Você perdeu 10 de vida ";
+            health               -= 10;
+            healthText.innerText = health;
+
+            if (health <= 0) {
+                lose();
+            }
+        }
+    }
+}
+
+function pickTwo () {
+    pick(2);
+}
+
+function pickEight () {
+    pick(8);
 }
